@@ -1,0 +1,139 @@
+LAB ASSIGNMENT B1
+Name: Akansha Pankaj Sonar 
+Roll No: C33371 
+Div: 3 
+Batch: T12 
+***************************************************************************
+sudo systemctl start mongod
+[sudo] password for student: 
+student@student-OptiPlex-3020:~$ mongo
+MongoDB shell version v5.0.20
+queries->
+use student;
+switched to db student
+CREATE OPERATION:->
+> db.createCollection('students');
+{ "ok" : 1 }
+INSERTION OPERATION:->
+> db.student.insert({'id':1,'Name':'Ajay'});
+WriteResult({ "nInserted" : 1 })
+> db.student.insertOne({'id':2,'Name':'Sujay'});
+{
+"acknowledged" : true,
+"insertedId" : ObjectId("65266f264088209077cb9b61")
+}
+> db.student.insertMany([{'id':3,'Name':'jay'},{'id':4,'Name':'vijay'}]);
+{
+"acknowledged" : true,
+"insertedIds" : [
+ObjectId("65266fb54088209077cb9b62"),
+ObjectId("65266fb54088209077cb9b63")
+]
+}
+UPDATE OPERATION:->
+> db.student.update({'id':4},{$set:{'Name':'rucha'}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.find();
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("65266fb54088209077cb9b62"), "id" : 3, "Name" : "jay" }
+{ "_id" : ObjectId("65266fb54088209077cb9b63"), "id" : 4, "Name" : "rucha" }
+> db.student.find().pretty();
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("65266fb54088209077cb9b62"), "id" : 3, "Name" : "jay" }
+{ "_id" : ObjectId("65266fb54088209077cb9b63"), "id" : 4, "Name" : "rucha" }
+DELETION OPERATION:->
+db.student.deleteOne({'id':4});
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.student.remove({'id':3});
+WriteResult({ "nRemoved" : 1 })
+> db.student.find().pretty();
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+> db.student.insertOne({'id':4,'Name':'Sujay'});
+{
+"acknowledged" : true,
+"insertedId" : ObjectId("652670cb4088209077cb9b64")
+}
+> db.student.insertOne({'id':4,'Name':'A','div':3});
+{
+"acknowledged" : true,
+"insertedId" : ObjectId("652670ea4088209077cb9b65")
+}
+> db.student.insertOne({'id':6,'Name':'A','div':4});
+{
+"acknowledged" : true,
+"insertedId" : ObjectId("652670f94088209077cb9b66")
+}
+> db.student.find();
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670cb4088209077cb9b64"), "id" : 4, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+> db.student.find({'Name':'A'});
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+OPERATORS->
+db.student.find({$and:[{'Name':'A','div':3}]});
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+> db.student.find({$or:[{'Name':'A'}]});
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+db.student.find({$nor:[{'Name':'A','div':3}]});
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670cb4088209077cb9b64"), "id" : 4, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+db.student.find({'id':{$not:{$lt:2}}});
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670cb4088209077cb9b64"), "id" : 4, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+SAVE OPERATION:->
+> db.student.save({'_id':ObjectId('123456789123456789aaaccc'),'id':1,'Name':'Ajay'});
+WriteResult({
+"nMatched" : 0,
+"nUpserted" : 1,
+"nModified" : 0,
+"_id" : ObjectId("123456789123456789aaaccc")
+})
+> db.student.find();
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670cb4088209077cb9b64"), "id" : 4, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+{ "_id" : ObjectId("123456789123456789aaaccc"), "id" : 1, "Name" : "Ajay" }
+QUERY OPERATORS:->
+1).gte operator:
+db.student.find({'id':{$gte:2}});
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670cb4088209077cb9b64"), "id" : 4, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+2).lt operator:
+> db.student.find({'id':{$lt:2}});
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("123456789123456789aaaccc"), "id" : 1, "Name" : "Ajay" }
+3).ne operator:
+> db.student.find({'id':{$ne:2}});
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("652670cb4088209077cb9b64"), "id" : 4, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }
+{ "_id" : ObjectId("123456789123456789aaaccc"), "id" : 1, "Name" : "Ajay" }
+4).eq operator:
+> db.student.find({'id':{$eq:2}});
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+5).in operator:
+> db.student.find({'id':{$in:[1,2,3]}});
+{ "_id" : ObjectId("65266f024088209077cb9b60"), "id" : 1, "Name" : "Ajay" }
+{ "_id" : ObjectId("65266f264088209077cb9b61"), "id" : 2, "Name" : "Sujay" }
+{ "_id" : ObjectId("123456789123456789aaaccc"), "id" : 1, "Name" : "Ajay" }
+6).nin operator:
+> db.student.find({'id':{$nin:[1,2,3]}});
+{ "_id" : ObjectId("652670cb4088209077cb9b64"), "id" : 4, "Name" : "Sujay" }
+{ "_id" : ObjectId("652670ea4088209077cb9b65"), "id" : 4, "Name" : "A", "div" : 3 }
+{ "_id" : ObjectId("652670f94088209077cb9b66"), "id" : 6, "Name" : "A", "div" : 4 }

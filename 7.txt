@@ -1,0 +1,195 @@
+LAB ASSIGNMENT 7
+Name: Akansha Pankaj Sonar 
+Roll No: C33371 
+Div: 3 
+Batch: T12 
+**********************************************************************************
+mysql> create table library(b_id int,title varchar(30),edition int,no_of_copy int);
+Query OK, 0 rows affected (0.19 sec)
+mysql> create table lib_audit(b_id int,title varchar(30),edition int,no_of_copy int,date_of_mod 
+date,operation_type varchar(30),user_of_operation varchar(30));
+Query OK, 0 rows affected (0.20 sec)
+mysql> create table transaction(t_id int,b_id int,s_id int,i_r varchar(10),no_of_copy_i_r int,date_i_r 
+date);
+Query OK, 0 rows affected (0.18 sec)
+mysql> insert into library(b_id,title,edition,no_of_copy) 
+values(1,'wizards',1,5),(2,'maha',3,7),(3,'bible',4,8),(4,'wings',5,10),(5,'helen_keler',2,9);
+Query OK, 5 rows affected (0.06 sec)
+Records: 5 Duplicates: 0 Warnings: 0
+mysql> select * from library;
++------+-------------+---------+------------+
+| b_id | title | edition | no_of_copy |
++------+-------------+---------+------------+
+| 1 | wizards | 1 | 5 |
+| 2 | maha | 3 | 7 |
+| 3 | bible | 4 | 8 |
+| 4 | wings | 5 | 10 |
+| 5 | helen_keler | 2 | 9 |
++------+-------------+---------+------------+
+5 rows in set (0.00 sec)
+QUERY 1---> Create trigger to keep track of records that are updated or deleted from library 
+table.Old value of updated/deleted should be added in audit table along with date of 
+modification.Type of operation and user who perform operation should be modified
+mysql> delimiter $$
+create trigger b1
+ -> after update
+ -> on library
+ -> for each row
+ -> begin
+ -> declare
+ -> a varchar(30);
+ -> set a="updated";
+ -> insert into lib_audit 
+values(old.b_id,old.title,old.edition,old.no_of_copy,curdate(),a,current_user());
+ -> end;
+ -> $$
+Query OK, 0 rows affected (0.09 sec)
+update library set title="matilda" where b_id=1;
+ -> $$
+Query OK, 0 rows affected (0.05 sec)
+Rows matched: 1 Changed: 0 Warnings: 0
+select * from library;
+ -> $$
++------+-------------+---------+------------+
+| b_id | title | edition | no_of_copy |
++------+-------------+---------+------------+
+| 1 | matilda | 1 | 5 |
+| 2 | maha | 3 | 7 |
+| 3 | bible | 4 | 8 |
+| 4 | wings | 5 | 10 |
+| 5 | helen_keler | 2 | 9 |
++------+-------------+---------+------------+
+5 rows in set (0.00 sec)
+mysql> select * from lib_audit;
+ -> $$
++------+---------+---------+------------+-------------+----------------+-------------------+
+| b_id | title | edition | no_of_copy | date_of_mod | operation_type | user_of_operation |
++------+---------+---------+------------+-------------+----------------+-------------------+
+| 1 | wizards | 1 | 5 | 2023-10-06 | updated | root@localhost |
+| 1 | matilda | 1 | 5 | 2023-10-06 | updated | root@localhost |
++------+---------+---------+------------+-------------+----------------+-------------------+
+2 rows in set (0.00 sec)
+for delete--->
+create trigger b2
+ -> after delete
+ -> on library
+ -> for each row
+ -> begin
+ -> declare
+ -> b varchar(30);
+ -> set b="delete";
+ -> insert into lib_audit 
+values(old.b_id,old.title,old.edition,old.no_of_copy,curdate(),b,current_user());
+ -> end;
+ -> $$
+Query OK, 0 rows affected (0.07 sec)
+delete from library where b_id=2;
+ -> $$
+Query OK, 1 row affected (0.06 sec)
+mysql> select * from lib_audit;
+ -> $$
++------+---------+---------+------------+-------------+----------------+-------------------+
+| b_id | title | edition | no_of_copy | date_of_mod | operation_type | user_of_operation |
++------+---------+---------+------------+-------------+----------------+-------------------+
+| 1 | wizards | 1 | 5 | 2023-10-06 | updated | root@localhost |
+| 1 | matilda | 1 | 5 | 2023-10-06 | updated | root@localhost |
+| 2 | maha | 3 | 7 | 2023-10-06 | delete | root@localhost |
++------+---------+---------+------------+-------------+----------------+-------------------+
+3 rows in set (0.00 sec)
+select * from library;
+ -> $$
++------+-------------+---------+------------+
+| b_id | title | edition | no_of_copy |
++------+-------------+---------+------------+
+| 1 | matilda | 1 | 5 |
+| 3 | bible | 4 | 8 |
+| 4 | wings | 5 | 10 |
+| 5 | helen_keler | 2 | 9 |
++------+-------------+---------+------------+
+QUERY 2--> To create trigger to check no. of copies available before issuing book if no. of copy 
+issuing is greater than no. of book available then issue no. of books which are available
+mysql> create trigger s1
+ -> before insert
+ -> on transaction
+ -> for each row 
+ -> begin
+ -> declare 
+ -> n int;
+ -> if new.i_r="i" then select no_of_copy into n from library where b_id=new.b_id;
+ -> if new.no_of_copy>n then set new.no_of_copy=n;
+ -> end if;
+ -> end;
+ -> $$
+Query OK, 0 rows affected (0.07 sec)
+QUERY 3-> To update no. of copies available after book is issued or returned
+mysql> delimiter $$
+mysql> create trigger p3
+ -> after insert 
+ -> on transaction
+ -> for each row
+ -> begin
+ -> if new.i_r='i' then update library set no_of_copy=no_of_copy-new.no_of_copy where 
+b_id=new.b_id;
+ -> else update library set no_of_copy=no_of_copy+new.no_of_copy where b_id=new.b_id;
+ -> end if;
+ -> end;
+ -> $$
+Query OK, 0 rows affected (0.09 sec)
+mysql> insert into transaction values(1,10,20,'i',4,'2022-1-1');
+ -> $$
+Query OK, 1 row affected (0.07 sec)
+mysql> select * from library;
+ -> $$
++------+-------------+---------+------------+
+| b_id | title | edition | no_of_copy |
++------+-------------+---------+------------+
+| 1 | matilda | 1 | 5 |
+| 4 | wings | 5 | 10 |
+| 5 | helen_keler | 2 | 9 |
++------+-------------+---------+------------+
+3 rows in set (0.00 sec)
+mysql> insert into transaction values(2,11,21,'i',5,'2022-1-2');
+ -> $$
+Query OK, 1 row affected (0.04 sec)
+mysql> select * from library;
+ -> $$
++------+-------------+---------+------------+
+| b_id | title | edition | no_of_copy |
++------+-------------+---------+------------+
+| 1 | matilda | 1 | 5 |
+| 4 | wings | 5 | 10 |
+| 5 | helen_keler | 2 | 9 |
++------+-------------+---------+------------+
+3 rows in set (0.00 sec)
+mysql> select * from transaction;
+ -> $$
++------+------+------+------+------------+------------+
+| t_id | b_id | s_id | i_r | no_of_copy | date_i_r |
++------+------+------+------+------------+------------+
+| 1 | 10 | 20 | i | 4 | 2022-01-01 |
+| 2 | 11 | 21 | i | 5 | 2022-01-02 |
++------+------+------+------+------------+------------+
+2 rows in set (0.00 sec)
+mysql> insert into transaction values(1,10,20,'r',4,'2022-1-1');
+ -> $$
+Query OK, 1 row affected (0.03 sec)
+mysql> select * from library;
+ -> $$
++------+-------------+---------+------------+
+| b_id | title | edition | no_of_copy |
++------+-------------+---------+------------+
+| 1 | matilda | 1 | 5 |
+| 4 | wings | 5 | 10 |
+| 5 | helen_keler | 2 | 9 |
++------+-------------+---------+------------+
+3 rows in set (0.00 sec)
+mysql> select * from transaction;
+ -> $$
++------+------+------+------+------------+------------+
+| t_id | b_id | s_id | i_r | no_of_copy | date_i_r |
++------+------+------+------+------------+------------+
+| 1 | 10 | 20 | i | 4 | 2022-01-01 |
+| 2 | 11 | 21 | i | 5 | 2022-01-02 |
+| 1 | 10 | 20 | r | 4 | 2022-01-01 |
++------+------+------+------+------------+------------+
+3 rows in set (0.00 sec)

@@ -1,0 +1,99 @@
+ LAB ASSIGNMENT 5
+Name: Akansha Pankaj Sonar
+Roll No: C33371
+Div: 3
+Batch: T12
+***************************************************************************
+mysql> create table stud_marks(name varchar(30),total_marks int);
+Query OK, 0 rows affected (0.04 sec)
+mysql> create table result(roll_no int,name varchar(30),class varchar(20));
+Query OK, 0 rows affected (0.03 sec)
+mysql> desc stud_marks;
++-------------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| name | varchar(30) | YES | | NULL | |
+| total_marks | int | YES | | NULL | |
++-------------+-------------+------+-----+---------+-------+
+2 rows in set (0.01 sec)
+mysql> desc result;
++---------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| roll_no | int | YES | | NULL | |
+| name | varchar(30) | YES | | NULL | |
+| class | varchar(20) | YES | | NULL | |
++---------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+mysql> create procedure proc_grade(IN roll int, IN name varchar(30), In marks int)
+ -> BEGIN
+ -> DECLARE class varchar(30);
+ ->
+ -> if marks >= 990 AND marks <= 1500 then
+ -> set class = 'Distinction';
+ ->
+ -> elseif marks >= 900 AND marks <= 989 then
+ -> set class = 'First';
+ ->
+ -> elseif marks >= 825 AND marks <= 899 then
+ -> set class = 'Second';
+ ->
+ -> elseif marks >= 824 AND marks <= 700 then
+ -> set class = 'Pass';
+ ->
+ -> else
+ -> set class = 'Fail';
+ -> end if;
+ ->
+ -> INSERT INTO stud_marks values(name, marks);
+ -> INSERT INTO Result values(roll, name, class);
+ -> END
+ -> /
+Query OK, 0 rows affected (0.03 sec)
+mysql> call proc_grade(1,'aakansha',1111);
+ -> /
+Query OK, 1 row affected (0.02 sec)
+mysql> call proc_grade(2,'sanika',891);
+ -> /
+Query OK, 1 row affected (0.01 sec)
+mysql> call proc_grade(3,'jay',967);
+ -> /
+Query OK, 1 row affected (0.01 sec)
+mysql> select * from stud_marks;
+ -> /
++----------+-------------+
+| name | total_marks |
++----------+-------------+
+| aakansha | 1111 |
+| sanika | 891 |
+| jay | 967 |
++----------+-------------+
+3 rows in set (0.00 sec)
+mysql> select * from result;
+ -> /
++---------+----------+-------------+
+| roll_no | name | class |
++---------+----------+-------------+
+| 1 | aakansha | Distinction |
+| 2 | sanika | Second |
+| 3 | jay | First |
++---------+----------+-------------+
+3 rows in set (0.00 sec)
+mysql> create function total_stud(class_name varchar(50))
+ -> returns int
+ -> begin
+ -> declare
+ -> total int;
+ -> select distinct count(*) into total from result where class = class_name;
+ -> return total;
+ -> end;
+ -> /
+Query OK, 0 rows affected (0.00 sec)
+mysql> select total_stud('Distinction');
+ -> /
++---------------------------+
+| total_stud('Distinction') |
++---------------------------+
+| 1 |
++---------------------------+
+1 row in set (0.00 sec)

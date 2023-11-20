@@ -1,0 +1,256 @@
+mysql> create table patient(pat_id int,pat_name varchar(20),date_admit int,age int,city 
+varchar(20));
+Query OK, 0 rows affected (0.19 sec)
+mysql> create table doctor(doc_id int,doc_name varchar(20),qualification varchar(20),experience 
+int,department varchar(20),city varchar(20),salary int);
+Query OK, 0 rows affected (0.20 sec)
+mysql> create table treatment(doc_id int,pat_id int,disease varchar(20));
+Query OK, 0 rows affected (0.20 sec)
+mysql> insert into doctor(doc_id,doc_name,qualification,experience,department,city,salary) 
+values(201,'ajay','mbbs',6,'neuro','pune',8000000),(202,'kajal','bhms',9,'heart','mumbai',50000000),(
+203,'ajnkya','bds',5,'dental','surat',300000000),(204,'komal','mbbs',4,'gynac','pune',7000000),(205,'r
+aj','mbbs',3,'heart','pune',400000);
+Query OK, 5 rows affected (0.04 sec)
+Records: 5 Duplicates: 0 Warnings: 0
+mysql> select * from doctor;
++--------+----------+---------------+------------+------------+--------+-----------+
+| doc_id | doc_name | qualification | experience | department | city | salary |
++--------+----------+---------------+------------+------------+--------+-----------+
+| 201 | ajay | mbbs | 6 | neuro | pune | 8000000 |
+| 202 | kajal | bhms | 9 | heart | mumbai | 50000000 |
+| 203 | ajnkya | bds | 5 | dental | surat | 300000000 |
+| 204 | komal | mbbs | 4 | gynac | pune | 7000000 |
+| 205 | raj | mbbs | 3 | heart | pune | 400000 |
++--------+----------+---------------+------------+------------+--------+-----------+
+5 rows in set (0.01 sec)
+mysql> create table patients(pat_id int,pat_name varchar(20),date_admit date,age int,city 
+varchar(20));
+Query OK, 0 rows affected (0.18 sec)
+mysql> insert into patients(pat_id,pat_name,date_admit,age,city) values(101,'abhay','2023-06-
+02',35,'pune'),(102,'atul','2023-07-12',45,'mumbai'),(103,'abhi','2023-08-
+11',30,'surat'),(104,'akash','2023-09-03',26,'pune');
+Query OK, 4 rows affected (0.05 sec)
+Records: 4 Duplicates: 0 Warnings: 0
+mysql> select * from patients;
++--------+----------+------------+------+--------+
+| pat_id | pat_name | date_admit | age | city |
++--------+----------+------------+------+--------+
+| 101 | abhay | 2023-06-02 | 35 | pune |
+| 102 | atul | 2023-07-12 | 45 | mumbai |
+| 103 | abhi | 2023-08-11 | 30 | surat |
+| 104 | akash | 2023-09-03 | 26 | pune |
++--------+----------+------------+------+--------+
+4 rows in set (0.00 sec)
+mysql> select * from doctor;
++--------+----------+---------------+------------+------------+--------+-----------+
+| doc_id | doc_name | qualification | experience | department | city | salary |
++--------+----------+---------------+------------+------------+--------+-----------+
+| 201 | ajay | mbbs | 6 | neuro | pune | 8000000 |
+| 202 | kajal | bhms | 9 | heart | mumbai | 50000000 |
+| 203 | ajnkya | bds | 5 | dental | surat | 300000000 |
+| 204 | komal | mbbs | 4 | gynac | pune | 7000000 |
+| 205 | raj | mbbs | 3 | heart | pune | 400000 |
++--------+----------+---------------+------------+------------+--------+-----------+
+5 rows in set (0.00 sec)
+mysql> insert into treatment(doc_id,pat_id,disease) 
+values(201,101,'brain_tumor'),(202,102,'heart_surjery'),(203,103,'root_canal'),(204,104,'cancer');
+Query OK, 4 rows affected (0.03 sec)
+Records: 4 Duplicates: 0 Warnings: 0
+mysql> select * from treatment;
++--------+--------+---------------+
+| doc_id | pat_id | disease |
++--------+--------+---------------+
+| 201 | 101 | brain_tumor |
+| 202 | 102 | heart_surjery |
+| 203 | 103 | root_canal |
+| 204 | 104 | cancer |
++--------+--------+---------------+
+4 rows in set (0.00 sec)
+QUERIES:
+1).Display all patient names between age group 18-50
+mysql> select pat_name from patients where age between 18 and 50;
++----------+
+| pat_name |
++----------+
+| abhay |
+| atul |
+| abhi |
+| akash |
++----------+
+4 rows in set (0.00 sec)
+2).Display list of all doctors who are mbbs
+mysql> select doc_name from doctor where qualification='mbbs';
++----------+
+| doc_name |
++----------+
+| ajay |
+| komal |
+| raj |
++----------+
+3 rows in set (0.00 sec)
+3).Display list of all doctor whose experience is >5
+mysql> select doc_name from doctor where experience>5;
++----------+
+| doc_name |
++----------+
+| ajay |
+| kajal |
++----------+
+2 rows in set (0.00 sec)
+4).Display patient name suffering from cancer
+mysql> select pat_name from patients,treatment where treatment.disease='cancer' and 
+treatment.pat_id=patients.pat_id;
++----------+
+| pat_name |
++----------+
+| akash |
++----------+
+1 row in set (0.00 sec)
+5).Display patient name and doctor name who is treating cancer patients
+mysql> select pat_name,doc_name from patients as p,doctor as d,treatment as t where 
+t.disease='cancer' and t.pat_id=p.pat_id and d.doc_id=t.doc_id;
++----------+----------+
+| pat_name | doc_name |
++----------+----------+
+| akash | komal |
++----------+----------+
+1 row in set (0.00 sec)
+6).Display patient names whose name start with ‘a’ and end with ‘l’
+mysql> select pat_name from patients where pat_name like 'a%' and pat_name like '%l' ;
++----------+
+| pat_name |
++----------+
+| atul |
++----------+
+1 row in set (0.00 sec)
+mysql> select pat_name from patients where pat_name like 'a%l' ;
++----------+
+| pat_name |
++----------+
+| atul |
++----------+
+1 row in set (0.00 sec)
+7).Remove all records of patient table with patient id 104
+mysql> delete from patients where pat_id=104;
+Query OK, 1 row affected (0.07 sec)
+mysql> select * from patients;
++--------+----------+------------+------+--------+
+| pat_id | pat_name | date_admit | age | city |
++--------+----------+------------+------+--------+
+| 101 | abhay | 2023-06-02 | 35 | pune |
+| 102 | atul | 2023-07-12 | 45 | mumbai |
+| 103 | abhi | 2023-08-11 | 30 | surat |
++--------+----------+------------+------+--------+
+3 rows in set (0.00 sec)
+8).Remove all records of doctor where doctor id = 205
+mysql> delete from doctor where doc_id=205;
+Query OK, 1 row affected (0.04 sec)
+mysql> select * from doctor;
++--------+----------+---------------+------------+------------+--------+-----------+
+| doc_id | doc_name | qualification | experience | department | city | salary |
++--------+----------+---------------+------------+------------+--------+-----------+
+| 201 | ajay | mbbs | 6 | neuro | pune | 8000000 |
+| 202 | kajal | bhms | 9 | heart | mumbai | 50000000 |
+| 203 | ajnkya | bds | 5 | dental | surat | 300000000 |
+| 204 | komal | mbbs | 4 | gynac | pune | 7000000 |
++--------+----------+---------------+------------+------------+--------+-----------+
+4 rows in set (0.00 sec)
+9).Change qualification of any one doctor
+mysql> update doctor set qualification ='md' where doc_id=204;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+mysql> select * from doctor;
++--------+----------+---------------+------------+------------+--------+-----------+
+| doc_id | doc_name | qualification | experience | department | city | salary |
++--------+----------+---------------+------------+------------+--------+-----------+
+| 201 | ajay | mbbs | 6 | neuro | pune | 8000000 |
+| 202 | kajal | bhms | 9 | heart | mumbai | 50000000 |
+| 203 | ajnkya | bds | 5 | dental | surat | 300000000 |
+| 204 | komal | md | 4 | gynac | pune | 7000000 |
++--------+----------+---------------+------------+------------+--------+-----------+
+4 rows in set (0.00 sec)
+10).Display department wise total salary of doctors
+mysql> select department,sum(salary) from doctor group by department;
++------------+-------------+
+| department | sum(salary) |
++------------+-------------+
+| dental | 300000000 |
+| gynac | 7000000 |
+| heart | 50000000 |
+| neuro | 8000000 |
++------------+-------------+
+4 rows in set (0.01 sec)
+11).Find department that have highest average salary
+mysql> select department,avg(salary) from doctor group by department having avg(salary)>= 
+all(select avg(salary) from doctor group by department);
++------------+----------------+
+| department | avg(salary) |
++------------+----------------+
+| dental | 300000000.0000 |
++------------+----------------+
+1 row in set (0.00 sec)
+12).Find avg salary of doctor in dentist department
+mysql> select avg(salary) from doctor group by department having department='dental';
++----------------+
+| avg(salary) |
++----------------+
+| 300000000.0000 |
++----------------+
+1 row in set (0.00 sec)
+13).Find department where avg salary of department is more than 50000
+mysql> select department from doctor group by department having avg(salary)>'50000';
++------------+
+| department |
++------------+
+| dental |
+| gynac |
+| heart |
+| neuro |
++------------+
+4 rows in set (0.00 sec)
+14).Find how many doctors work in hospital
+mysql> select count(doc_id) from doctor ;
++---------------+
+| count(doc_id) |
++---------------+
+| 4 |
++---------------+
+1 row in set (0.01 sec)
+15).Find how many doctors actually treated patient
+mysql> select count(*) from doctor ;
++----------+
+| count(*) |
++----------+
+| 4 |
++----------+
+1 row in set (0.00 sec)
+16).List cities in which either doctor or patient lives
+mysql> select count(distinct doc_id) from treatment;
++------------------------+
+| count(distinct doc_id) |
++------------------------+
+| 4 |
++------------------------+
+1 row in set (0.00 sec)
+17)List cities in which both patient and doctor lives
+mysql> select city from doctor union select city from patients;
++--------+
+| city |
++--------+
+| pune |
+| mumbai |
+| surat |
++--------+
+3 rows in set (0.00 sec)
+18).Find doctor who have not treated any patient
+mysql> select distinct doctor.city from doctor,patients where doctor.city=patients.city;
++--------+
+| city |
++--------+
+| pune |
+| mumbai |
+| surat |
++--------+
+3 rows in set (0.00 sec)
+mysql> select doc_name from doctor where doc_id not in(select distinct doc_id from treatment);
+Empty set (0.00 sec

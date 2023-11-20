@@ -1,0 +1,39 @@
+ LAB ASSIGNMENT 8
+Name: Akansha Pankaj Sonar 
+Roll No: C33371 
+Div: 3 
+Batch: T12 
+****************************************************************
+import mysql.connector
+from mysql.connector import Error
+try:
+ connection = 
+mysql.connector.connect(host="localhost",user="root",password="root123",d
+atabase="student")
+ if connection.is_connected():
+ db_Info=connection.get_server_info()
+ cursor=connection.cursor()
+ cursor.execute("desc stud;")
+ record=cursor.fetchall()
+ print("You are connected to database: ",record)
+ 
+except Error as e:
+ print("Error while connecting to MYSQL",e)
+ 
+finally:
+ if connection.is_connected():
+ cursor.close()
+ connection.close()
+ print("MYSQL connection is closed") 
+ 
+OUTPUT:->
+student@student-optiplex:~/Desktop$ python db8.py
+('You are connected to database: ', [(u'roll', u'int(11)', u'YES', u'', None, u''), 
+(u'name', u'varchar(10)', u'YES', u'', None, u''), (u'course', u'varchar(10)', u'YES', 
+u'', None, u''), (u'marks', u'int(11)', u'YES', u'', None, u'')])
+MYSQL connection is closed
+FOR fetchone:
+student@student-optiplex:~/Desktop$ python db8.py
+('You are connected to database: ', (u'roll', u'int(11)', u'YES', u'', None, u''))
+ 
+ 

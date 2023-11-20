@@ -1,0 +1,88 @@
+LAB ASSIGNMENT 6
+Name: Akansha Pankaj Sonar
+Roll No: C33371
+Div: 3 
+Batch: T12 
+**********************************************************************************
+CODE 1------>
+create table s6(roll_no int,name varchar(30),marks int);
+insert into s6 values(1,'jay',37);
+insert into s6 values(2,'ajay',38);
+insert into s6 values(3,'sujay',70);
+select * from s6;
+DECLARE
+BEGIN
+UPDATE s6 SET marks=40 WHERE marks between 36 and 39;
+IF SQL%notFound THEN
+dbms_output.put_line('No records were updated');
+ELSE
+dbms_output.put_line('Total records updated: '||SQL%rowcount);
+END IF;
+END;
+select * from s6;
+OUTPUT1----->
+Table created.
+1 row(s) inserted.
+1 row(s) inserted.
+1 row(s) inserted.
+Result Set 9
+ROLL_NO NAME MARKS
+1 jay 37
+2 ajay 38
+3 sujay 70
+3 rows selected.
+Statement processed.
+Total records updated: 2
+Result Set 10
+ROLL_NO NAME MARKS
+1 jay 40
+2 ajay 40
+3 sujay 70
+3 rows selected.
+CODE 2---->
+create table s7(roll_no int,name varchar(30),marks int);
+insert into s7 values(1,'jay',37);
+insert into s7 values(2,'ajay',38);
+insert into s7 values(3,'sujay',70);
+select * from s7;
+DECLARE
+BEGIN
+UPDATE s7 SET marks=40 WHERE marks between 36 and 39;
+IF SQL%notFound THEN
+dbms_output.put_line('No records were updated');
+ELSE
+dbms_output.put_line('Total records updated: '||SQL%rowcount);
+END IF;
+END;
+create table snew(roll_no int,name varchar(30),marks int);
+insert into snew values(4,'shyam',50);
+insert into snew values(5,'ram',70);
+select * from snew;
+DECLARE
+CURSOR cur_s is select * from s7;
+CURSOR cur_new(a int) is select * from snew where roll_no=a;
+nrec snew %rowtype;
+BEGIN
+FOR srec in cur_s
+ LOOP
+ OPEN cur_new(srec.roll_no);
+ FETCH cur_new INTO nrec;
+IF cur_new %notfound THEN 
+ INSERT INTO snew values(srec.roll_no,srec.name,srec.marks);
+END IF;
+CLOSE cur_new;
+END LOOP;
+END;
+select * from s7;
+OUTPUT-------->
+1 row(s) inserted.
+1 row(s) inserted.
+Result Set 11
+ROLL_NO NAME MARKS
+1 jay 40
+2 ajay 40
+3 sujay 70
+4 shyam 50
+5 ram 70
+5 rows selected.
+Statement processed.

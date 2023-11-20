@@ -1,0 +1,64 @@
+ LAB ASSIGNMENT 4
+Name: Akansha Pankaj Sonar
+Roll No: C33371
+Div: 3
+Batch: T12
+***************************************************************************
+SQL> create table borrower(roll_no int,name varchar(20),date_of_i date,name_of_book 
+varchar(20),status varchar(10));
+Table created. 
+SQL> create table fine(roll_no int,date_of_r date,amt int); 
+Table created. 
+SQL> insert into borrower values(1,'harsh','12-09-2023','harry potter','i'); 
+1 row created. 
+SQL> insert into borrower values(2,'sandesh','15-09-2023','iceage','r'); 
+1 row created. 
+SQL> insert into borrower values(3,'Rahul','20-08-2023','pokemon','i'); 
+1 row created. 
+SQL> insert into borrower values(4,'sahil','25-08-2023','duel','r'); 
+1 row created. 
+SQL> insert into borrower values(5,'ishwari','02-09-2023','hindikatha','i'); 
+1 row created. 
+SQL> select * from borrower; 
+ROLL_NO NAME DATE_OF_I NAME_OF_BOOK STATUS 
+------------ ----------- ---------------- ---------------------- ----------
+1 harsh 12-09-23 harry potter i 
+2 sandesh 15-09-23 iceage r 
+3 Rahul 20-08-23 pokemon i 
+4 sahil 25-08-23 duel r 
+5 ishwari 02-09-23 hindikatha i 
+declare 
+roll int:=&roll_number; 
+b_name varchar(20):='&bookname'; 
+mdays int:=0; 
+ndays date; 
+fine_amt int:=0; 
+begin 
+select date_of_i into ndays from borrower where roll_no=roll and name_of_book=b_name; 
+mdays:=sysdate-ndays; 
+if mdays>=15 and mdays=30 then 
+fine_amt:=15*5+(mdays-30)*50; 
+end if; 
+update borrower set status='r' where roll_no=roll and name_of_book=b_name; 
+if fine_amt>0 then 
+insert into fine values(roll,sysdate,fine_amt); 
+end if; 
+exception 
+when no_data_found then 
+dbms_output.put_line('No data found'); 
+when others then 
+dbms_output.put_line('Exception occurred'); 
+end; 
+/
+select * from fine; 
+ROLL_NO DATE_OF_R AMT 
+------------- ---------------- -------
+3 18-09-23 75 
+SQL> select * from borrower; 
+ROLL_NO NAME DATE_OF_I NAME_OF_BOOK STATUS 
+------------ ----------- ---------------- ---------------------- ----------
+1 harsh 12-09-23 harry potter i 
+2 sandesh 15-09-23 iceage r 
+3 Rahul 20-08-23 pokemon r
+4 sahil 25-08-23 duel r 
+5 ishwari 02-09-23 hindikatha i 

@@ -1,0 +1,260 @@
+DEPARTMENT TABLE
+mysql> create table department(depart_no int,depart_name varchar(14),building_name 
+varchar(14));
+Query OK, 0 rows affected (0.18 sec)
+mysql> insert into department(depart_no,depart_name,building_name) 
+values(1,'comp','old'),(2,'it','old'),(3,'entc','new');
+Query OK, 3 rows affected (0.03 sec)
+Records: 3 Duplicates: 0 Warnings: 0
+mysql> select * from department;
++-----------+-------------+---------------+
+| depart_no | depart_name | building_name |
++-----------+-------------+---------------+
+| 1 | comp | old |
+| 2 | it | old |
+| 3 | entc | new |
++-----------+-------------+---------------+
+3 rows in set (0.00 sec)
+mysql> alter table department add unique(depart_name);
+Query OK, 0 rows affected (0.20 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+INSTRUCTOR TABLE
+mysql> create table instructorr(inst_id int,inst_name varchar(14) not null,depart_no int,salary 
+int,mobile_no int);
+Query OK, 0 rows affected (0.23 sec)
+mysql> desc instructorr;
++-----------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| inst_id | int(11) | YES | | NULL | |
+| inst_name | varchar(14) | NO | | NULL | |
+| depart_no | int(11) | YES | | NULL | |
+| salary | int(11) | YES | | NULL | |
+| mobile_no | int(11) | YES | | NULL | |
++-----------+-------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+mysql> insert into instructorr(inst_id,inst_name,depart_no,salary,mobile_no) 
+values(101,'ajay',1,200000,99996666),(102,'jay',2,400000,99888833);
+Query OK, 2 rows affected (0.03 sec)
+Records: 2 Duplicates: 0 Warnings: 0
+mysql> select * from instructorr;
++---------+-----------+-----------+--------+-----------+
+| inst_id | inst_name | depart_no | salary | mobile_no |
++---------+-----------+-----------+--------+-----------+
+| 101 | ajay | 1 | 200000 | 99996666 |
+| 102 | jay | 2 | 400000 | 99888833 |
++---------+-----------+-----------+--------+-----------+
+2 rows in set (0.00 sec)
+COURSE TABLE
+mysql> create table course(course_id int,title varchar(14),depart_no int,credits int);
+Query OK, 0 rows affected (0.19 sec)
+mysql> insert into course(course_id,title,depart_no,credits) 
+values(101,'dbms',1,5),(102,'dsa',1,4),(103,'cloud',2,6);
+Query OK, 3 rows affected (0.03 sec)
+Records: 3 Duplicates: 0 Warnings: 0
+mysql> select * from course;
++-----------+-------+-----------+---------+
+| course_id | title | depart_no | credits |
++-----------+-------+-----------+---------+
+| 101 | dbms | 1 | 5 |
+| 102 | dsa | 1 | 4 |
+| 103 | cloud | 2 | 6 |
++-----------+-------+-----------+---------+
+3 rows in set (0.00 sec)
+TEACHER TABLE
+mysql> create table teacher(teacher_id int,course_id int,semester int,year int);
+Query OK, 0 rows affected (0.19 sec)
+mysql> insert into teacher(teacher_id,course_id,semester,year) values(1001,32,4,2),(1006,35,5,3);
+Query OK, 2 rows affected (0.03 sec)
+Records: 2 Duplicates: 0 Warnings: 0
+mysql> select * from teacher;
++------------+-----------+----------+------+
+| teacher_id | course_id | semester | year |
++------------+-----------+----------+------+
+| 1001 | 32 | 4 | 2 |
+| 1006 | 35 | 5 | 3 |
++------------+-----------+----------+------+
+2 rows in set (0.00 sec)
+QUERIES:
+1). Add primary key in department table on department no.
+mysql> alter table department add primary key(depart_no);
+Query OK, 0 rows affected (0.49 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> desc department;
++---------------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| depart_no | int(11) | NO | PRI | NULL | |
+| depart_name | varchar(14) | YES | UNI | NULL | |
+| building_name | varchar(14) | YES | | NULL | |
++---------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+2).Add foreign key in instructor table on department no
+mysql> alter table instructorr add foreign key(depart_no) references department(depart_no);
+Query OK, 2 rows affected (0.53 sec)
+Records: 2 Duplicates: 0 Warnings: 0
+mysql> desc instructorr;
++-----------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| inst_id | int(11) | YES | | NULL | |
+| inst_name | varchar(14) | NO | | NULL | |
+| depart_no | int(11) | YES | MUL | NULL | |
+| salary | int(11) | YES | | NULL | |
+| mobile_no | int(11) | YES | | NULL | |
++-----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+3). Create view of instructor relation except salary field
+mysql> create view inss as select inst_id,inst_name,depart_no,mobile_no from instructorr;
+Query OK, 0 rows affected (0.02 sec)
+mysql> select * from inss;
++---------+-----------+-----------+-----------+
+| inst_id | inst_name | depart_no | mobile_no |
++---------+-----------+-----------+-----------+
+| 101 | ajay | 1 | 99996666 |
+| 102 | jay | 2 | 99888833 |
++---------+-----------+-----------+-----------+
+2 rows in set (0.00 sec)
+4).Create unique index on mobile no of instructor table
+mysql> create unique index uniq_index on instructorr(mobile_no);
+Query OK, 0 rows affected (0.21 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> show indexes from instructorr;
++-------------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+----
+--------+---------+---------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | 
+Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+----
+--------+---------+---------------+
+| instructorr | 0 | uniq_index | 1 | mobile_no | A | 2 | NULL | NULL | YES 
+| BTREE | | |
+| instructorr | 1 | depart_no | 1 | depart_no | A | 2 | NULL | NULL | YES 
+| BTREE | | |
++-------------+------------+------------+--------------+-------------+-----------+-------------+----------+--------+------+----
+--------+---------+---------------+
+2 rows in set (0.00 sec)
+5).Modify table department by adding column budget
+mysql> alter table department add(budget int);
+Query OK, 0 rows affected (0.45 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> desc department;
++---------------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| depart_no | int(11) | NO | PRI | NULL | |
+| depart_name | varchar(14) | YES | UNI | NULL | |
+| building_name | varchar(14) | YES | | NULL | |
+| budget | int(11) | YES | | NULL | |
++---------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+6)Update department no of particular instruction using update view
+mysql> update inss set depart_no = 3 where inst_id = 102;
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+mysql> select * from inss;
++---------+-----------+-----------+-----------+
+| inst_id | inst_name | depart_no | mobile_no |
++---------+-----------+-----------+-----------+
+| 101 | ajay | 1 | 99996666 |
+| 102 | jay | 3 | 99888833 |
++---------+-----------+-----------+-----------+
+2 rows in set (0.00 sec)
+7).Delete record of particular instructor from instructor table using newly created view
+mysql> delete from inss where depart_no = 3;
+Query OK, 1 row affected (0.04 sec)
+mysql> select * from inss;
++---------+-----------+-----------+-----------+
+| inst_id | inst_name | depart_no | mobile_no |
++---------+-----------+-----------+-----------+
+| 101 | ajay | 1 | 99996666 |
++---------+-----------+-----------+-----------+
+1 row in set (0.00 sec)
+8).Delete view
+mysql> drop view inss;
+Query OK, 0 rows affected (0.00 sec)
+mysql> select * from inss;
+ERROR 1146 (42S02): Table 'divthree.inss' doesn't exist
+9).Remove budget from department table 
+mysql> alter table department drop budget;
+Query OK, 0 rows affected (0.48 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> desc department;
++---------------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| depart_no | int(11) | NO | PRI | NULL | |
+| depart_name | varchar(14) | YES | UNI | NULL | |
+| building_name | varchar(14) | YES | | NULL | |
++---------------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+10).Increase the size of title field of course relation
+mysql> alter table course modify title varchar(20);
+Query OK, 0 rows affected (0.06 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> desc course;
++-----------+-------------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| course_id | int(11) | YES | | NULL | |
+| title | varchar(20) | YES | | NULL | |
+| depart_no | int(11) | YES | | NULL | |
+| credits | int(11) | YES | | NULL | |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+11).Create view by showing instructor name with department name and salary
+mysql> create view viewww as select inst_name,depart_name,salary from instructorr,department 
+where instructorr.depart_no=department.depart_no;
+Query OK, 0 rows affected (0.06 sec)
+mysql> select * from viewww;
++-----------+-------------+--------+
+| inst_name | depart_name | salary |
++-----------+-------------+--------+
+| ajay | comp | 200000 |
++-----------+-------------+--------+
+1 row in set (0.03 sec)
+12).Update salary of particular instructor using update view
+mysql> update viewww set salary=500000 where inst_name='ajay';
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1 Changed: 1 Warnings: 0
+mysql> select * from viewww;
++-----------+-------------+--------+
+| inst_name | depart_name | salary |
++-----------+-------------+--------+
+| ajay | comp | 500000 |
++-----------+-------------+--------+
+1 row in set (0.00 sec)
+13).Delete index from instructor table
+mysql> alter table instructorr drop index uniq_index;
+Query OK, 0 rows affected (0.11 sec)
+Records: 0 Duplicates: 0 Warnings: 0
+mysql> show indexes from instructorr;
++-------------+------------+-----------+--------------+-------------+-----------+-------------+----------+--------+------+-----
+-------+---------+---------------+
+| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | 
+Sub_part | Packed | Null | Index_type | Comment | Index_comment |
++-------------+------------+-----------+--------------+-------------+-----------+-------------+----------+--------+------+-----
+-------+---------+---------------+
+| instructorr | 1 | depart_no | 1 | depart_no | A | 1 | NULL | NULL | YES | 
+BTREE | | |
++-------------+------------+-----------+--------------+-------------+-----------+-------------+----------+--------+------+-----
+-------+---------+---------------+
+1 row in set (0.00 sec)
+14).Rename course table to another table name
+mysql> rename table course to course_table;
+Query OK, 0 rows affected (0.09 sec)
+mysql> select * from course_table;
++-----------+-------+-----------+---------+
+| course_id | title | depart_no | credits |
++-----------+-------+-----------+---------+
+| 101 | dbms | 1 | 5 |
+| 102 | dsa | 1 | 4 |
+| 103 | cloud | 2 | 6 |
++-----------+-------+-----------+---------+
+3 rows in set (0.00 sec)
+15).Create view of computer department teacher name who teaches in 4th semester
+mysql> create view neww as select depart_name,semester,inst_name from 
+department,teacher,instructorr where teacher.semester=4 and department.depart_name='comp' 
+and instructorr.inst_id=teacher.teacher_id and instructorr.depart_no=department.depart_no;
+Query OK, 0 rows affected (0.04 sec)
+mysql> select * from neww;
+Empty set (0.02 sec
