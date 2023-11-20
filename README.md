@@ -10,4 +10,4 @@
 B1. Design and Develop MongoDB Queries using CRUD operations. (Use CRUD operations, SAVE method, logical operators.\
 B2. Implement aggregation and indexing with suitable example using MongoDB.\
 B3. MongoDB - Map reduces operations.\
-B4. Database Connectivity.\
+B4. Database Connectivity.
